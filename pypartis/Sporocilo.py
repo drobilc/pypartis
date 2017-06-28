@@ -2,7 +2,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-from .Podatki import POSTA_URL
+from .podatki import POSTA_URL
 
 class Sporocilo(object):
     """

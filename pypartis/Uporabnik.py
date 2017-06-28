@@ -2,7 +2,8 @@
 import requests
 from bs4 import BeautifulSoup
 
-from .Podatki import PRIJAVA_URL, UPORABNIK_URL, POSTA_URL
+from .podatki import PRIJAVA_URL, UPORABNIK_URL, POSTA_URL
+from .sporocilo import Sporocilo
 
 class Uporabnik(object):
     """

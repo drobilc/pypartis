@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-from .Uporabnik import Uporabnik
+from .uporabnik import Uporabnik
 
 class Komentar(object):
     def __init__(self, html, seja):

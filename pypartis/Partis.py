@@ -2,9 +2,9 @@
 import requests
 from bs4 import BeautifulSoup
 
-from .Uporabnik import Uporabnik
-from .Torrent import Torrent
-from .Podatki import GLAVNI_URL, PRIJAVA_URL, NAPACNA_PRIJAVA_URL, BRSKAJ_URL, UPORABNIK_URL, POSTA_URL
+from .uporabnik import Uporabnik
+from .torrent import Torrent
+from .podatki import GLAVNI_URL, PRIJAVA_URL, NAPACNA_PRIJAVA_URL, BRSKAJ_URL, UPORABNIK_URL, POSTA_URL
 
 #Kategorije in opcije za iskanje
 KATEGORIJE = {"anime": 2, "eknjige": 3, "dvd-r": 4, "sport": 5, "svcd": 6, "xvid": 7, "glasba": 8, "gba": 9, "ps2": 12, "psp": 13, "xbox": 14, "tv": 17, "xxx": 18, "slike": 19, "hd": 20, "audiobook": 21, "videospoti": 23, "dokumentarci": 24, "gsm": 25, "pda": 26, "wii": 27, "ps3": 28, "ipod": 29, "risanke": 30, "hd-tv": 31, "xxx-dvd": 36, "xxx-clip": 35, "xxx-hd": 37, "sd-tv": 38}
@@ -33,24 +33,12 @@ class Partis(object):
             raise PartisException("Napacno uporabnisko ime ali geslo.")
 
         #Uporabnika pridobimo iz piskotka (tako kot to pocne partis)
-        #readCookie('udata').split('%7C');
-
         podatkiUporabnika = self._seja.cookies["udata"].split("%7C")
         idUporabnika = podatkiUporabnika[0]
         self.uporabnik = Uporabnik(self._seja, "/" + idUporabnika)
 
         #Za brezveze prenesemo /brskaj stran
         h = self._seja.get(BRSKAJ_URL)
-        
-        #Poiscemo podatke o prijavljenem uporabniku
-        #html = BeautifulSoup(h.text, "html5lib")
-        #plinkb = html.find("a", {"id": "plinkb"})
-        #if plinkb and "href" in plinkb.attrs:
-        #    self.uporabnik = Uporabnik(self.seja, plinkb["href"])
-        
-        #download = html.find("li", {"class": "download"})
-        #upload = html.find("li", {"class": "upload"})
-        #ratio = html.find("li", {"class": "ratio"})
         
     def iskanje(self, kljucne_besede="", stran=0, kategorije=[], moznosti=[], sortiranje=""):
         """

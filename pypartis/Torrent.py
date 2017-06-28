@@ -3,16 +3,15 @@ import requests
 from bs4 import BeautifulSoup
 import codecs
 
-from .Podatki import GLAVNI_URL, PRIJAVA_URL, NAPACNA_PRIJAVA_URL, BRSKAJ_URL, UPORABNIK_URL, POSTA_URL
-from .Uporabnik import Uporabnik
-from .Komentar import Komentar
+from .podatki import GLAVNI_URL, PRIJAVA_URL, NAPACNA_PRIJAVA_URL, BRSKAJ_URL, UPORABNIK_URL, POSTA_URL
+from .uporabnik import Uporabnik
+from .komentar import Komentar
 
 class Torrent(object):
     """
     Pridobljen torrent iz partis spletne strani
     """
     def __init__(self, seja, html):
-        #self._html = html
         self._seja = seja
 
         self._je_ze_preneseno = False
