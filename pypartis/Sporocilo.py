@@ -5,11 +5,8 @@ from bs4 import BeautifulSoup
 from .podatki import POSTA_URL
 
 class Sporocilo(object):
-    """
-    Sporocilo, ki ga uporabnik poslje oziroma prejme
-    """
+    """Sporocilo, ki ga uporabnik poslje oziroma prejme"""
     def __init__(self, seja, _id):
-
         if _id.startswith("pi"):
             _id = _id.replace("pi", "")
         self.id = _id
@@ -52,9 +49,7 @@ class Sporocilo(object):
                 
             if atribut in podatki:
                 return podatki[atribut]
-                
-            else:
-                raise AttributeError()
+
         raise AttributeError()
 
     def izbrisi(self):

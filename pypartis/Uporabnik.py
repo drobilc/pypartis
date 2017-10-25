@@ -6,21 +6,17 @@ from .podatki import PRIJAVA_URL, UPORABNIK_URL, POSTA_URL
 from .sporocilo import Sporocilo
 
 class Uporabnik(object):
-    """
-    Uporabnik na partis spletni strani
-    """
+    """Uporabnik na portalu Partis"""
+
     def __init__(self, seja, _id):
-        self.id = _id.split("/")[-1]
+        self.id = _id
         self.url = UPORABNIK_URL + self.id
         self._seja = seja
         self._je_ze_preneseno = False
-        
-        #Prenesemo podatke o uporabniku
 
     def prenesiPodatke(self):
         r = self._seja.get(self.url)
-        html = r.text
-        html = BeautifulSoup(html, "html5lib")
+        html = BeautifulSoup(r.text, "html5lib")
 
         podatki = {}
 
@@ -51,18 +47,18 @@ class Uporabnik(object):
             
             if atribut in podatki:
                 return podatki[atribut]
-            
-            else:
-                raise AttributeError()
+
         raise AttributeError()
 
     def posljiSporocilo(self, zadeva, sporocilo):
+        """Posiljanje sporocil temu uporabniku"""
         url = GLAVNI_URL + "/profil/sendmsg/"
         glava = {"X-Requested-With": "XMLHttpRequest"}
         parametri = {'to': self.uporabnisko_ime, 'subject': zadeva, 'msg': sporocilo}
         self._seja.get(url, params=parametri, headers=glava)
 
     def prenesiSporocila(self):
+        """Prenos sporocil, ki jih ima ta uporabnik"""
         r = self._seja.get(POSTA_URL)
         html = BeautifulSoup(r.text, "html5lib")
         postaContainer = html.find("div", {"id": "inbox"})        
@@ -72,6 +68,7 @@ class Uporabnik(object):
         sporocila = []
         for element in elementi:
             slikaS = element.find("img")
-            sporocila.append(Sporocilo(self._seja, slikaS["id"]))
+            idSporocila = slikaS["id"]
+            sporocila.append(Sporocilo(self._seja, idSporocila))
 
         return sporocila

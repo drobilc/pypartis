@@ -13,13 +13,10 @@ DRSI = 2
 MUSI = 3
 
 class Partis(object):
-    """
-    Partis.si parser
-    """
+    """Partis.si scraper"""
     def __init__(self, uporabnisko_ime, geslo):
         
         self.uporabnisko_ime = uporabnisko_ime
-        #self.geslo = geslo
         
         self._seja = requests.Session()
         self._seja.headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
@@ -27,54 +24,50 @@ class Partis(object):
         glava = {'Content-Type': 'application/x-www-form-urlencoded'}
         podatki = {"user[username]": uporabnisko_ime, "user[password]": geslo}
         
-        #Poskusamo se prijaviti
+        # Prijavimo se na Partis.si
         r = self._seja.post(PRIJAVA_URL, headers=glava, data=podatki)
         if r.url == NAPACNA_PRIJAVA_URL:
             raise PartisException("Napacno uporabnisko ime ali geslo.")
 
-        #Uporabnika pridobimo iz piskotka (tako kot to pocne partis)
+        # Podatke uporabnika dobimo iz piskotka
         podatkiUporabnika = self._seja.cookies["udata"].split("%7C")
         idUporabnika = podatkiUporabnika[0]
-        self.uporabnik = Uporabnik(self._seja, "/" + idUporabnika)
+        self.uporabnik = Uporabnik(self._seja, idUporabnika)
 
-        #Za brezveze prenesemo /brskaj stran
+        # Posljemo zahtevo na /brskaj, sicer ne moremo prenasati podatkov
         h = self._seja.get(BRSKAJ_URL)
         
     def iskanje(self, kljucne_besede="", stran=0, kategorije=[], moznosti=[], sortiranje=""):
-        """
-        Poisce vse torrente na doloceni strani
-        Mozna sortiranja:
-        created_at DESC - datum narascajoce
-        created_at - PADAJOCE
-        seeders - NARASCAJOCE
-        seeders desc - PADAJOCE
-        leechers - NARA
-        leechers desc - PADA
-        size - NARA
-        size desc - PADA
-        completed - NARA
-        completed desc - PADA
-        """
+        """Najdemo torrente z ustreznimi parametri"""
+
+        # Ce navedemo nepravilno sortiranje torrentov, se to ponastavi na privzeto
+        if sortiranje not in ["", "created_at desc", "created_at", "seeders", "seeders desc", "leechers", "leechers desc", "size", "size desc", "completed", "completed desc"]:
+            sortiranje = ""
+
+        # Kategorije posredujemo v numericni obliki
         pretvorjeneKategorije = []
         for kategorija in kategorije:
-            zacasno = pretvoriVNumericnoKategorijo(kategorija)
-            if zacasno:
-                pretvorjeneKategorije.append(zacasno)
+            if kategorija in KATEGORIJE:
+                pretvorjeneKategorije.append(KATEGORIJE[kategorija])
+
         moznosti = map(str, moznosti)
         parametri = {"offset": stran, "keyword": kljucne_besede, "category": ",".join(pretvorjeneKategorije), "option":",".join(moznosti), "ns":True}
         if sortiranje and len(sortiranje) > 0:
             parametri["sort"] = sortiranje
         
+        # Sestavimo poizvedbo
         glava = {"X-Requested-With": "XMLHttpRequest"}
         s = self._seja.get(BRSKAJ_URL, params=parametri, headers=glava)
-        #Pretvorimo zadetke v Zadetek
-        html = BeautifulSoup(s.text, "html5lib")
-        self.html = html
-        torrenti = html.findAll("div", {"class": "listek"})
 
+        # Prenesemo html in v njem najdemo ustrezne torrente
+        html = BeautifulSoup(s.text, "html5lib")
+        najdeniTorrenti = html.findAll("div", {"class": "listek"})
+
+        # Iz htmlja izvlecemo podatke o torrentih
         zadetki = []
-        #Pridobimo podatke vsakega torrenta
-        for torrent in torrenti:
-            zadetki.append(Torrent(self._seja, torrent))
+        for torrentHtml in najdeniTorrenti:
+            trenutniTorrent = Torrent(self._seja)
+            trenutniTorrent.izHtml(torrentHtml)
+            zadetki.append(trenutniTorrent)
 
         return zadetki
