@@ -46,3 +46,28 @@ Funkcijo `iskanje` je mogoče klicati z naslednjimi atributi (noben ni obvezen):
   * `completed desc` - Po prenosih padajoče
 
 Če funkcijo pokličemo brez parametrov, nam vrne seznam 20 zadnjih torrentov na partisu.
+
+## Torrenti
+Pri iskanju nam modul vrne seznam zadetkov. Vsak zadetek je objekt tipa `Torrent`.
+Objekt ima naslednje funkcije:
+* `oceni(ocena)` - ocenjevanje torrenta (najmanjsa ocena je 0, najvecja pa 5)
+* `zahvaliSe()` - zahvali se za torrent
+* `dodajMedZaznamke()` - dodajanje torrenta med zaznamke
+* `odstraniIzZaznamkov()` - odstranjevanje torrenta iz zaznamkov
+* `komentiraj(komentar)` - komentiranje torrenta (uporablja se lahko BB kodo)
+* `prenesi(pot)` - prenos `*.torrent` datoteke s strežnika
+
+Primer uporabe:
+```python
+# Najdemo 20 zadnjih torrentov
+torrenti = partisScrapper.iskanje()
+
+# Iz seznama izberemo prvi torrent
+zadnjiTorrent = torrenti[0]
+
+# Pod torrent dodamo komentar
+zadnjiTorrent.komentiraj("Super torrent, hvala nalagalcu")
+
+# Torrentu damo 3 zvezdice
+zadnjiTorrent.oceni(3)
+```
