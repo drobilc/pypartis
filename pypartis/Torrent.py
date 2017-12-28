@@ -2,6 +2,7 @@
 import requests
 from bs4 import BeautifulSoup
 import codecs
+import datetime
 
 from .podatki import GLAVNI_URL, PRIJAVA_URL, NAPACNA_PRIJAVA_URL, BRSKAJ_URL, UPORABNIK_URL, POSTA_URL
 from .uporabnik import Uporabnik
@@ -27,6 +28,7 @@ class Torrent(object):
             'sejalci': None,
             'pijavke': None,
             'prenosi': None,
+            'datum': None
         }
 
         for ime in privzeteVrednosti:
@@ -34,6 +36,11 @@ class Torrent(object):
 
     def izHtml(self, html):
         """Ustvari torrent objekt iz html"""
+        # Najdemo kdaj je bil torrent nalozen
+        if "ctime" in html.attrs:
+            unix_ustvarjen = int(html["ctime"])
+            self.datum = datetime.datetime.fromtimestamp(unix_ustvarjen)
+
         #Dobimo id torrenta in kategorijo, v katero spada
         likona = html.find("div", {"class": "likona"})
         if likona:
@@ -69,7 +76,7 @@ class Torrent(object):
         mozni = ["velikost", "sejalci", "pijavke", "prenosi"]
         for st, div in enumerate(ostaliPodatki):
             try:
-                vrednost = float(div.text)
+                vrednost = int(div.text)
                 setattr(self, mozni[st], vrednost)
             except ValueError:
                 setattr(self, mozni[st], div.text)

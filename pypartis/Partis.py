@@ -51,7 +51,7 @@ class Partis(object):
                 pretvorjeneKategorije.append(KATEGORIJE[kategorija])
 
         moznosti = map(str, moznosti)
-        parametri = {"offset": stran, "keyword": kljucne_besede, "category": ",".join(pretvorjeneKategorije), "option":",".join(moznosti), "ns":True}
+        parametri = {"offset": stran * 40, "keyword": kljucne_besede, "category": ",".join(pretvorjeneKategorije), "option":",".join(moznosti), "ns":True}
         if sortiranje and len(sortiranje) > 0:
             parametri["sort"] = sortiranje
         

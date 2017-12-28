@@ -2,8 +2,15 @@
 partis.si website scraper.
 
 ## Uporaba
-Preden lahko uporabljamo pypartis scrapper ga je potrebno namestiti na svoj računalnik. To lahko storimo tako, da si prenesemo Github repozitorij in postavimo mapo `pypartis` v mapo v kateri imamo trenuten projekt.
+Preden lahko uporabljamo pypartis scraper ga je potrebno namestiti na svoj računalnik. To lahko storimo tako, da si prenesemo Github repozitorij in postavimo mapo `pypartis` v mapo v kateri imamo trenuten projekt.
 Za to lahko uporabimo ukaz `git clone https://github.com/drobilc/pypartis`.
+
+Ravno tako lahko modul namestimo s sledečimi ukazi
+```
+git clone https://github.com/drobilc/pypartis
+cd pypartis
+python setup.py install
+```
 
 Ko je modul nameščen, ga je potrebno v projektu vključiti. To storimo tako, da na vrh Python skripte dodamo spodnjo vrstico.
 ```python
@@ -12,7 +19,7 @@ from pypartis import partis
 
 Sedaj je potrebno ustvariti Partis sejo, ki jo bomo uporabljali za prenos vseh podatkov.
 ```python
-partisScrapper = partis.Partis("uporabnisko_ime", "geslo")
+partisScraper = partis.Partis("uporabnisko_ime", "geslo")
 ```
 
 Če podatki za prijavo niso pravilni nam bo tolmač vrnil izjemo, sicer pa lahko nadaljujemo z uporabo funkcij Partisa.
@@ -21,7 +28,7 @@ partisScrapper = partis.Partis("uporabnisko_ime", "geslo")
 Za iskanje torrentov je potrebno poklicati funkcijo `iskanje`. Za primer glej spodaj.
 ```python
 # Najdemo vse torrente s pomocjo kljucnih besed "Harry Potter"
-torrenti = partisScrapper.iskanje("Harry Potter")
+torrenti = partisScraper.iskanje("Harry Potter")
 
 # Za vsak torrent izpisemo njegov naslov
 for torrent in torrenti:
@@ -60,7 +67,7 @@ Objekt ima naslednje funkcije:
 Primer uporabe:
 ```python
 # Najdemo 20 zadnjih torrentov
-torrenti = partisScrapper.iskanje()
+torrenti = partisScraper.iskanje()
 
 # Iz seznama izberemo prvi torrent
 zadnjiTorrent = torrenti[0]
